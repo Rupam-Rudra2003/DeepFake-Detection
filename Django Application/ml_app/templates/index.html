@@ -1,71 +1,759 @@
 {% extends 'base.html' %}
-{%load static%}
-{%block content%}
-<div class="bg" >
-<div class="container">
+{% load static %}
+{% block content %}
+<style>
+    .bg {
+        background: linear-gradient(135deg, #1a1d3a 0%, #2d3561 50%, #1a1d3a 100%);
+        min-height: 100vh;
+        padding: 0;
+    }
     
-    <div class="row align-items-center justify-content-center">
-        <div class="col-12 my-auto">
-            <div class="logo text-center mb-3"><img src="{% static 'images/logo1.png'%}" alt="Logo" ></div>
-            <div class="width-400">
-                <video width="100%" controls id="videos">
-                    <source src="" id="video_source">
-                    Your browser does not support HTML5 video.
-                </video>
-                <form class="form" method="POST" enctype="multipart/form-data" name="video-upload" id="video-upload"
-                    class="text-center mt-3">
-                    {%csrf_token%}
-                    <div class="form-group">
-                        <label>{{form.upload_video_file.widget}}</label>
-                        {{form.upload_video_file}}
-                        <!-- <input type="file" id="{{form.upload_video_file.id_for_label}}" name="{{form.upload_video_file.name}}" /> -->
-                        {%if form.upload_video_file.errors%}
-                        {%for each_error in form.upload_video_file.errors%}
-                        <div class="alert alert-danger mt-1 {{form.upload_video_file.id_for_label}}">
-                            {{each_error}}
-                        </div>
-                        {%endfor%}
-                        {%endif%}
+    /* Modern Navbar Styles */
+    .navbar {
+        background: rgba(30, 41, 59, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: #e2e8f0;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .nav-logo-icon {
+        width: 40px;
+        height: 40px;
+        background: #4f46e5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+    }
+    
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .nav-link {
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+        position: relative;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+        color: #e2e8f0;
+        background: rgba(79, 70, 229, 0.1);
+    }
+    
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background: #4f46e5;
+        border-radius: 50%;
+    }
+    
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #e2e8f0;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(30, 41, 59, 0.98);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        padding: 1rem;
+    }
+    
+    .mobile-menu.active {
+        display: block;
+    }
+    
+    .mobile-nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .mobile-nav-link {
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    
+    .mobile-nav-link:hover, .mobile-nav-link.active {
+        color: #e2e8f0;
+        background: rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Main Content */
+    .main-content {
+        padding: 4rem 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .header-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: #4f46e5;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    
+    .logo-icon::before {
+        content: "✓";
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .main-title {
+        color: #e2e8f0;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+    
+    .analysis-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto 4rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    
+    .card-title {
+        color: #e2e8f0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .card-subtitle {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(79, 70, 229, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a78bfa;
+    }
+    
+    .video-preview {
+        width: 100%;
+        height: 300px;
+        border: 2px dashed rgba(71, 85, 105, 0.5);
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .video-preview video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    
+    .video-placeholder {
+        text-align: center;
+        color: #64748b;
+    }
+    
+    .video-placeholder-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 1rem;
+        opacity: 0.5;
+    }
+    
+    .form-group {
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+    
+    .file-upload-btn {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 8px;
+        color: #94a3b8;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .file-upload-btn:hover {
+        background: rgba(30, 41, 59, 1);
+        border-color: rgba(79, 70, 229, 0.5);
+        color: #e2e8f0;
+    }
+    
+    .file-upload-btn::before {
+        content: "⬆";
+        font-size: 16px;
+    }
+    
+    .slider-container {
+        margin-bottom: 2rem;
+    }
+    
+    .slider-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .slider-value {
+        color: #60a5fa;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .slider-wrapper {
+        position: relative;
+        margin: 1rem 0;
+    }
+    
+    #slider {
+        height: 6px;
+        background: rgba(71, 85, 105, 0.3);
+        border-radius: 3px;
+        border: none;
+    }
+    
+    #slider .ui-slider-handle {
+        width: 20px;
+        height: 20px;
+        background: #4f46e5;
+        border: 3px solid white;
+        border-radius: 50%;
+        cursor: pointer;
+        outline: none;
+        top: -7px;
+    }
+    
+    #slider .ui-slider-range {
+        background: #4f46e5;
+        border-radius: 3px;
+    }
+    
+    .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+    
+    .upload-btn {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .upload-btn:hover {
+        background: linear-gradient(135deg, #4338ca, #6d28d9);
+        transform: translateY(-1px);
+    }
+    
+    .upload-btn:active {
+        transform: translateY(0);
+    }
+    
+    .alert {
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+    }
+    
+    /* About Section */
+    .about-section {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 3rem;
+        margin: 4rem auto;
+        max-width: 1000px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .about-title {
+        color: #e2e8f0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+    }
+    
+    .about-text {
+        color: #cbd5e1;
+        font-size: 1.125rem;
+        line-height: 1.8;
+    }
+    
+    .about-text p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-features {
+        display: grid;
+        gap: 1.5rem;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(71, 85, 105, 0.2);
+    }
+    
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(79, 70, 229, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a78bfa;
+        font-size: 18px;
+    }
+    
+    .feature-text {
+        color: #e2e8f0;
+        font-weight: 500;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .main-title {
+            font-size: 2rem;
+        }
+        
+        .analysis-card, .about-section {
+            padding: 1.5rem;
+            margin: 2rem 1rem;
+        }
+        
+        .video-preview {
+            height: 200px;
+        }
+        
+        .about-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .about-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="bg">
+    <!-- Simple Navbar with Home and About -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-icon">🛡</div>
+                DetectAI
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+        
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-nav-links">
+                <li><a href="#home" class="mobile-nav-link active">Home</a></li>
+                <li><a href="#about" class="mobile-nav-link">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content" id="home">
+        <div class="container">
+            <div class="header-section">
+                <div class="logo-icon"></div>
+                <h1 class="main-title">🛡 DeepFake Detection</h1>
+                <p class="subtitle">Advanced AI-powered video analysis to detect manipulated content</p>
+            </div>
+            
+            <div class="analysis-card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Video Analysis</h2>
+                        <p class="card-subtitle">Upload your video for verification</p>
                     </div>
-                    <div class="form-group">
-                        <label for="{{form.sequence_length.id_for_label}}">{{form.sequence_length.label}}: </label><span
-                            id="slider-value"></span>
-                        <input type="number" hidden="hidden" id="{{form.sequence_length.id_for_label}}"
-                            name="{{form.sequence_length.name}}"></input>
-                        <div id='slider'></div>
-                        {%if form.sequence_length.errors%}
-                        {%for each_error in form.sequence_length.errors%}
-                        <div class="alert alert-danger mt-1 {{form.sequence_length.id_for_label}}">
-                            {{each_error}}
-                        </div>
-                        {%endfor%}
-                        {%endif%}
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                            <circle cx="12" cy="13" r="3"/>
+                        </svg>
                     </div>
-                    <button id="videoUpload" type="submit" name="submit" class="btn btn-success mt-3 btn-block">Upload</button>
+                </div>
+                
+                <div class="video-preview">
+                    <video width="100%" controls id="videos" style="display: none;">
+                        <source src="" id="video_source">
+                        Your browser does not support HTML5 video.
+                    </video>
+                    <div class="video-placeholder" id="video-placeholder">
+                        <svg class="video-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                        <p>Your video will appear here</p>
+                    </div>
+                </div>
+                
+                <form class="form" method="POST" enctype="multipart/form-data" name="video-upload" id="video-upload">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload Video File</label>
+                        <label for="{{ form.upload_video_file.id_for_label }}" class="file-upload-btn">
+                            Choose a video file
+                        </label>
+                        <input type="file" id="{{ form.upload_video_file.id_for_label }}" 
+                               name="{{ form.upload_video_file.name }}" 
+                               accept="video/*" 
+                               style="display: none;">
+                        
+                        {% if form.upload_video_file.errors %}
+                            {% for each_error in form.upload_video_file.errors %}
+                                <div class="alert alert-danger">{{ each_error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="slider-container">
+                            <div class="slider-header">
+                                <label class="form-label">Sequence Length</label>
+                                <span class="slider-value" id="slider-value">20</span>
+                            </div>
+                            
+                            <input type="number" hidden="hidden" 
+                                   id="{{ form.sequence_length.id_for_label }}" 
+                                   name="{{ form.sequence_length.name }}">
+                            
+                            <div class="slider-wrapper">
+                                <div id="slider"></div>
+                                <div class="slider-labels">
+                                    <span>Short</span>
+                                    <span>Medium</span>
+                                    <span>Long</span>
+                                </div>
+                            </div>
+                            
+                            {% if form.sequence_length.errors %}
+                                {% for each_error in form.sequence_length.errors %}
+                                    <div class="alert alert-danger">{{ each_error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <button id="videoUpload" type="submit" name="submit" class="upload-btn">
+                        Upload & Analyze
+                    </button>
                 </form>
             </div>
+
+            <!-- About Section -->
+            <section class="about-section" id="about">
+                <h2 class="about-title">About DetectAI</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>
+                            DetectAI is a cutting-edge artificial intelligence platform designed to identify and analyze deepfake content in videos. 
+                            Our advanced machine learning algorithms can detect subtle manipulations that are invisible to the human eye.
+                        </p>
+                        <p>
+                            With the rise of sophisticated video manipulation techniques, our mission is to provide reliable, 
+                            accurate, and accessible tools for content verification and digital media authentication.
+                        </p>
+                    </div>
+                    <div class="about-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <span class="feature-text">High Accuracy Detection</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⚡</div>
+                            <span class="feature-text">Real-time Analysis</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <span class="feature-text">Secure & Private</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <span class="feature-text">Detailed Reports</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>
-</div>
-{%endblock%}
-{%block js_cripts%}
-<script src="{%static 'js/script.js'%}"></script>
+{% endblock %}
+
+{% block js_cripts %}
+<script src="{% static 'js/script.js' %}"></script>
 <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenu.classList.toggle('active');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        
+        if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+            mobileMenu.classList.remove('active');
+        }
+    });
+
+    // Navigation active state management
+    function updateActiveNav() {
+        const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+        const sections = document.querySelectorAll('#home, #about');
+        
+        let current = 'home';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 150;
+            if (window.scrollY >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Update active nav on scroll
+    window.addEventListener('scroll', updateActiveNav);
+
     $(function () {
-        var sliderSequenceNumbers = [10,20,40,60,80,100];
+        var sliderSequenceNumbers = [10, 20, 40, 60, 80, 100];
+        
         var slider = $("div#slider").slider({
             value: 1,
             min: 0,
-            max: sliderSequenceNumbers.length-1,
+            max: sliderSequenceNumbers.length - 1,
             slide: function (event, ui) {
-                $('#{{form.sequence_length.id_for_label}}').val(sliderSequenceNumbers[ui.value]);
-                $('#{{form.sequence_length.id_for_label}}').val(sliderSequenceNumbers[ui.value]);
+                $('#{{ form.sequence_length.id_for_label }}').val(sliderSequenceNumbers[ui.value]);
                 $('#slider-value').html(sliderSequenceNumbers[ui.value]);
             }
         });
-        $("#{{form.sequence_length.id_for_label}}").val(sliderSequenceNumbers[$("#slider").slider("value")]);
+        
+        // Initialize values
+        $("#{{ form.sequence_length.id_for_label }}").val(sliderSequenceNumbers[$("#slider").slider("value")]);
         $('#slider-value').html(sliderSequenceNumbers[$("#slider").slider("value")]);
+        
+        // File input change handler
+        $('#{{ form.upload_video_file.id_for_label }}').on('change', function(e) {
+            var file = e.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#video_source').attr('src', e.target.result);
+                    $('#videos').show();
+                    $('#video-placeholder').hide();
+                    $('#videos')[0].load();
+                };
+                reader.readAsDataURL(file);
+                
+                // Update button text
+                $('.file-upload-btn').html('📁 ' + file.name);
+            }
+        });
+        
+        // Form submission handler
+        $('#video-upload').on('submit', function(e) {
+            var fileInput = $('#{{ form.upload_video_file.id_for_label }}')[0];
+            if (!fileInput.files.length) {
+                e.preventDefault();
+                alert('Please select a video file to upload.');
+                return false;
+            }
+            
+            // Show loading state
+            $('#videoUpload').html('Analyzing...').prop('disabled', true);
+        });
+
+        // Smooth scrolling for anchor links
+        $('a[href^="#"]').on('click', function(event) {
+            var target = $(this.getAttribute('href'));
+            if( target.length ) {
+                event.preventDefault();
+                $('html, body').stop().animate({
+                    scrollTop: target.offset().top - 100
+                }, 1000);
+            }
+        });
     });
 </script>
-{%endblock%}
+{% endblock %}

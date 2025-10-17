@@ -14,7 +14,7 @@
     <title>Deepfake Detection</title>
 </head>
 <body>
-    {%include 'nav-bar.html'%}
+    {% comment %} {%include 'nav-bar.html'%} {% endcomment %}
     {%block content%}
     {%endblock%}
     <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -27,6 +27,8 @@
     <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
         integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script> -->
         <script src="/static/js/jquery-ui.min.js"></script>
+
+        
     
         {%block js_cripts%}
     {%endblock%}

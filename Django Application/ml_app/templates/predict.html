@@ -1,110 +1,511 @@
 {% extends 'base.html' %}
 {% load static %}
-{%block content%}
-{%if no_faces%}
-<div class="container">
-  <div class="logo text-center mb-3"><img src="{% static 'images/logo1.png'%}" alt="Logo" ></div>
-  <hr />
-  <div class="alert alert-danger">
-    No faces detected. Cannot process the video.
-  </div>
+{% block content %}
+<style>
+    .bg {
+        background: linear-gradient(135deg, #1a1d3a 0%, #2d3561 50%, #1a1d3a 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .header-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: #4f46e5;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    
+    .logo-icon::before {
+        content: "✓";
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .main-title {
+        color: #e2e8f0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+    
+    .error-card {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .error-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(239, 68, 68, 0.2);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        color: #fca5a5;
+        font-size: 24px;
+    }
+    
+    .error-title {
+        color: #fca5a5;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .error-message {
+        color: #fecaca;
+        font-size: 1rem;
+    }
+    
+    .results-grid {
+        display: grid;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .result-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .card-title {
+        color: #e2e8f0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        background: rgba(79, 70, 229, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a78bfa;
+    }
+    
+    .images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .image-item {
+        border-radius: 8px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(71, 85, 105, 0.2);
+        transition: transform 0.2s, border-color 0.2s;
+    }
+    
+    .image-item:hover {
+        transform: scale(1.02);
+        border-color: rgba(79, 70, 229, 0.5);
+    }
+    
+    .image-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .faces-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .video-section {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .video-container {
+        position: relative;
+        display: inline-block;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .video-container video {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .result-display {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .result-title {
+        color: #e2e8f0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .result-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .result-real {
+        color: #22c55e;
+    }
+    
+    .result-fake {
+        color: #ef4444;
+    }
+    
+    .result-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .result-icon.real {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+    
+    .result-icon.fake {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+    
+    .confidence-badge {
+        display: inline-block;
+        background: rgba(79, 70, 229, 0.2);
+        color: #a78bfa;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 1rem;
+    }
+    
+    .play-instruction {
+        color: #94a3b8;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .play-instruction::before {
+        content: "▶";
+        color: #4f46e5;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 2rem;
+        }
+        
+        .result-card {
+            padding: 1.5rem;
+        }
+        
+        .images-grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+        
+        .faces-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .video-container video {
+            width: 100%;
+            max-width: 400px;
+        }
+    }
+    
+    /* Canvas overlay styling */
+    canvas {
+        position: absolute !important;
+        z-index: 10;
+        pointer-events: none;
+    }
+</style>
+
+<div class="bg">
+    <div class="container">
+        <div class="header-section">
+            <div class="logo-icon"></div>
+            <h1 class="main-title">🛡 DeepFake Detection</h1>
+            <p class="subtitle">Analysis Results</p>
+        </div>
+        
+        {% if no_faces %}
+            <div class="error-card">
+                <div class="error-icon">⚠</div>
+                <h2 class="error-title">No Faces Detected</h2>
+                <p class="error-message">Cannot process the video. Please upload a video with clearly visible faces.</p>
+            </div>
+        {% else %}
+            <div class="results-grid">
+                <!-- Frames Split Section -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <div class="card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21,15 16,10 5,21"/>
+                            </svg>
+                        </div>
+                        Extracted Frames
+                    </h3>
+                    <div class="images-grid" id="preprocessed_images">
+                        {% for each_image in preprocessed_images %}
+                            <div class="image-item">
+                                <img src="{% static each_image %}" alt="Frame" loading="lazy" />
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Face Cropped Frames Section -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <div class="card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        Detected Faces
+                    </h3>
+                    <div class="faces-grid" id="faces_images">
+                        {% for each_image in faces_cropped_images %}
+                            <div class="image-item">
+                                <img src="{% static each_image %}" alt="Face" loading="lazy" />
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Analysis Section -->
+            <div class="video-section">
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <div class="card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5,3 19,12 5,21 5,3"/>
+                            </svg>
+                        </div>
+                        Video Analysis
+                    </h3>
+                    
+                    <p class="play-instruction">Play the video to see real-time detection results</p>
+                    
+                    <div class="video-container">
+                        <video height="320" width="640" id="predict-media" controls>
+                            <source src="{{ MEDIA_URL }}{{ original_video }}" type="video/mp4" codecs="avc1.4d002a" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Display -->
+            <div class="result-display">
+                <h3 class="result-title">Detection Result</h3>
+                
+                {% if output == "REAL" %}
+                    <div class="result-value result-real">
+                        <span>{{ output }}</span>
+                        <div class="result-icon real">✓</div>
+                    </div>
+                    <div class="confidence-badge">Confidence: {{ confidence }}%</div>
+                {% else %}
+                    <div class="result-value result-fake">
+                        <span>{{ output }}</span>
+                        <div class="result-icon fake">✗</div>
+                    </div>
+                    <div class="confidence-badge">Confidence: {{ confidence }}%</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
 </div>
-{%else%}
-<div class="container">
-  <div class="logo text-center mb-3"><img src="{% static 'images/logo1.png'%}" alt="Logo" ></div>
-  <hr />
+{% endblock %}
 
-  <h3>Frames Split</h3>
-  <div id="preprocessed_images" class="col-12 mt-4 mb-2">
-    {% for each_image in preprocessed_images %}
-    <img src="{%static each_image%}" class="preprocess" width=auto height="250" />
-    {%endfor%}
-  </div>
-
-
-  <h3>Face Cropped Frames</h3>
-  <div id="faces_images" class="col-12 mb-2">
-    {% for each_image in faces_cropped_images %}
-    <img src="{%static each_image%}" class="faces" width=auto height="150" />
-    {%endfor%}
-  </div>
-
-  <div class="result text-center">
-    <h3>Play to see Result</h3>
-    <video height="320" width="640" id="predict-media" controls>
-      <source src="{{MEDIA_URL}}{{original_video}}" type="video/mp4" codecs="avc1.4d002a" />
-    </video>
-    {%if output == "REAL" %}
-    <h4 class="mx-auto">Result: <span style="color:green">{{output}}</span>
-      <img src="{% static 'images/thumpup.png'%}" alt="real" height="100px" width=auto>
-      {%else%}
-      <h4 class="mx-auto">Result: <span style="color:red">{{output}}</span>
-        <img src="{% static 'images/thumpdown.png'%}" alt="fake" height="100px" width=auto >
-      {%endif%}
-  </div>
-<!--
-  <h3>Heat Maps</h3>
-  <div id="heatmap_images" class="col-12 mb-4 ">
-    {% for each_heatmap_image in heatmap_images %}
-    <img src="{%static each_heatmap_image%}" class="heat-map" width="100" height="150" />
-    {%endfor%}
-  </div>
-</div>
--->
-{%endif%}
-{%endblock%}
-{%block js_cripts%}
-<script src="{%static 'js/face-api.min.js'%}"></script>
+{% block js_cripts %}
+<script src="{% static 'js/face-api.min.js' %}"></script>
 <script>
-  $(document).ready(function () {
-    const video = document.getElementById("predict-media");
+    $(document).ready(function () {
+        const video = document.getElementById("predict-media");
+        
+        if (!video) return; // Exit if no video element (in case of no_faces condition)
 
-    Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri('/static/json'),
-      faceapi.nets.tinyFaceDetector.loadFromUri("/static/json")
-      
-    ])
-
-    var detectionTimeout;
-    video.addEventListener("playing", () => {
-      var canvas;
-      if ($('canvas').length < 1) {
-        canvas = faceapi.createCanvasFromMedia(video);
-        canvas.style.top = video.offsetTop + "px";
-        canvas.style.left = video.offsetLeft + "px";
-        document.body.append(canvas);
-      }
-      /* In order to be able to pause the video */
-      const displaySize = { width: video.width, height: video.height - 60 };
-      faceapi.matchDimensions(canvas, displaySize);
-
-      detectionTimeout = setInterval(async () => {
-        const detections = await faceapi.detectAllFaces(video);
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.top = video.offsetTop + "px";
-        canvas.style.left = video.offsetLeft + "px";
-        resizedDetections.forEach((result, i) => {
-          console.log(resizedDetections[i].box);
-          var result = '{{output}}';
-          var confidence = '{{confidence}}';
-          var drawOptions = {label: result.concat("  " , confidence , "%")};
-          if (result == 'REAL'){
-            drawOptions["boxColor"] = "#0f0";
-          }
-          else if (result == 'FAKE'){
-            drawOptions["boxColor"] = "#f00";
-          }
-          var box = { x: resizedDetections[i].box.x, y: resizedDetections[i].box.y, height: 100, width: 100 };
-          const drawBox = new faceapi.draw.DrawBox(box, drawOptions);
-          drawBox.draw(canvas);
+        Promise.all([
+            faceapi.nets.ssdMobilenetv1.loadFromUri('/static/json'),
+            faceapi.nets.tinyFaceDetector.loadFromUri("/static/json")
+        ]).then(() => {
+            console.log('Face detection models loaded successfully');
+        }).catch(err => {
+            console.error('Error loading face detection models:', err);
         });
-      }, 1);
-    });
 
-    video.addEventListener("paused", () => {
-      clearTimeout(detectionTimeout);
+        var detectionTimeout;
+        
+        video.addEventListener("playing", () => {
+            var canvas;
+            if ($('canvas').length < 1) {
+                canvas = faceapi.createCanvasFromMedia(video);
+                canvas.style.position = 'absolute';
+                canvas.style.top = video.offsetTop + "px";
+                canvas.style.left = video.offsetLeft + "px";
+                canvas.style.zIndex = '10';
+                canvas.style.pointerEvents = 'none';
+                video.parentNode.appendChild(canvas);
+            } else {
+                canvas = $('canvas')[0];
+            }
+            
+            const displaySize = { width: video.videoWidth || video.width, height: video.videoHeight || video.height };
+            faceapi.matchDimensions(canvas, displaySize);
+
+            detectionTimeout = setInterval(async () => {
+                try {
+                    const detections = await faceapi.detectAllFaces(video);
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+                    
+                    const context = canvas.getContext("2d");
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Update canvas position
+                    canvas.style.top = video.offsetTop + "px";
+                    canvas.style.left = video.offsetLeft + "px";
+                    
+                    resizedDetections.forEach((detection, i) => {
+                        var result = '{{ output }}';
+                        var confidence = '{{ confidence }}';
+                        var drawOptions = {
+                            label: result + "  " + confidence + "%",
+                            lineWidth: 3,
+                            fontSize: 16,
+                            fontStyle: 'Arial'
+                        };
+                        
+                        if (result == 'REAL') {
+                            drawOptions["boxColor"] = "#22c55e";
+                            drawOptions["textColor"] = "#22c55e";
+                        } else if (result == 'FAKE') {
+                            drawOptions["boxColor"] = "#ef4444";
+                            drawOptions["textColor"] = "#ef4444";
+                        }
+                        
+                        var box = { 
+                            x: detection.box.x, 
+                            y: detection.box.y, 
+                            height: detection.box.height, 
+                            width: detection.box.width 
+                        };
+                        
+                        const drawBox = new faceapi.draw.DrawBox(box, drawOptions);
+                        drawBox.draw(canvas);
+                    });
+                } catch (error) {
+                    console.error('Error during face detection:', error);
+                }
+            }, 100); // Reduced frequency for better performance
+        });
+
+        video.addEventListener("pause", () => {
+            if (detectionTimeout) {
+                clearInterval(detectionTimeout);
+            }
+        });
+        
+        video.addEventListener("ended", () => {
+            if (detectionTimeout) {
+                clearInterval(detectionTimeout);
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const canvas = $('canvas')[0];
+            if (canvas && video) {
+                canvas.style.top = video.offsetTop + "px";
+                canvas.style.left = video.offsetLeft + "px";
+            }
+        });
     });
-  })
 </script>
-{%endblock%}
+{% endblock %}

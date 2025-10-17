@@ -1,4 +1,506 @@
-{% extends 'base.html' %}
 {% load static %}
-{%block content%}
-{%endblock%}
+{% block content %}
+<style>
+    .bg {
+        background: linear-gradient(135deg, #1a1d3a 0%, #2d3561 50%, #1a1d3a 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .header-section {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: #4f46e5;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    
+    .logo-icon::before {
+        content: "✓";
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .main-title {
+        color: #e2e8f0;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+    
+    .navigation {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .nav-link {
+        color: #94a3b8;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+        color: #e2e8f0;
+        background: rgba(79, 70, 229, 0.2);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+    }
+    
+    .about-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 3rem;
+        margin-bottom: 4rem;
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+    
+    .about-title {
+        color: #e2e8f0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .about-description {
+        color: #cbd5e1;
+        font-size: 1.125rem;
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .section-title {
+        color: #e2e8f0;
+        font-size: 2rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    
+    .team-member {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        transition: transform 0.2s, border-color 0.2s;
+    }
+    
+    .team-member:hover {
+        transform: translateY(-4px);
+        border-color: rgba(79, 70, 229, 0.5);
+    }
+    
+    .member-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 1.5rem;
+        border: 3px solid rgba(79, 70, 229, 0.3);
+        transition: border-color 0.2s;
+    }
+    
+    .team-member:hover .member-photo {
+        border-color: rgba(79, 70, 229, 0.8);
+    }
+    
+    .member-name {
+        color: #e2e8f0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .member-name a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .member-name a:hover {
+        color: #60a5fa;
+    }
+    
+    .member-role {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .contact-section {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 16px;
+        padding: 3rem;
+        margin-bottom: 4rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+    
+    .contact-info h3 {
+        color: #e2e8f0;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-info p {
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+    
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #cbd5e1;
+        font-size: 0.875rem;
+    }
+    
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(79, 70, 229, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+    
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-input {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        transition: border-color 0.2s, background-color 0.2s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: rgba(79, 70, 229, 0.5);
+        background: rgba(15, 23, 42, 1);
+    }
+    
+    .form-input::placeholder {
+        color: #64748b;
+    }
+    
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border: none;
+        border-radius: 8px;
+        padding: 1rem 2rem;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #4338ca, #6d28d9);
+        transform: translateY(-1px);
+    }
+    
+    .footer {
+        text-align: center;
+        padding: 2rem 0;
+        border-top: 1px solid rgba(71, 85, 105, 0.3);
+        margin-top: 2rem;
+    }
+    
+    .footer p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin: 0.5rem 0;
+    }
+    
+    .footer-heart {
+        color: #ef4444;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 2rem;
+        }
+        
+        .about-title {
+            font-size: 2rem;
+        }
+        
+        .about-card, .contact-section {
+            padding: 2rem;
+        }
+        
+        .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .team-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .navigation {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .member-photo {
+            width: 100px;
+            height: 100px;
+        }
+    }
+</style>
+
+<div class="bg">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="logo-icon"></div>
+            <h1 class="main-title">🛡 DetectAI</h1>
+            <p class="subtitle">Advanced AI-powered deepfake detection technology</p>
+            
+        </div>
+        
+        <!-- About Section -->
+        <div class="about-card">
+            <h2 class="about-title">About Our Project</h2>
+            <p class="about-description">
+                DetectAI is an innovative AI-powered solution designed to revolutionize deepfake detection and video analysis. 
+                Our project aims to provide cutting-edge AI detection tools that help individuals and organizations identify 
+                manipulated content, ensuring authenticity and trust in digital media. With a focus on accuracy, speed, and 
+                ease of use, DetectAI is the perfect tool for anyone looking to harness the power of artificial intelligence 
+                for content verification and security.
+            </p>
+        </div>
+        
+        <!-- Team Section -->
+        <h2 class="section-title">Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <img src="{% static 'photos/bhaskar.jpeg' %}" alt="Bhaskar Maity" class="member-photo">
+                <h3 class="member-name">Bhaskar Maity</h3>
+                <p class="member-role">Project Lead & Back-End</p>
+            </div>
+            
+            <div class="team-member">
+                <img src="{% static 'photos/anubhab.png' %}" alt="Anubhab Bhattacharjee" class="member-photo">
+                <h3 class="member-name">
+                    <a href="https://www.linkedin.com/in/anubhab0709/" target="_blank" rel="noopener noreferrer">
+                        Anubhab Bhattacharjee
+                    </a>
+                </h3>
+                <p class="member-role">Front-End & Back-End</p>
+            </div>
+            
+            <div class="team-member">
+                <img src="{% static 'photos/rupam.png' %}" alt="Rupam Rudra" class="member-photo">
+                <h3 class="member-name">Rupam Rudra</h3>
+                <p class="member-role">Back-End</p>
+            </div>
+            
+            <div class="team-member">
+                <img src="{% static 'photos/mrinmay.jpeg' %}" alt="Mrinmay Nath" class="member-photo">
+                <h3 class="member-name">Mrinmay Nath</h3>
+                <p class="member-role">Project Lead & Back-End</p>
+            </div>
+            
+            <div class="team-member">
+                <img src="{% static 'photos/anupam.jpg' %}" alt="Anupam Das" class="member-photo">
+                <h3 class="member-name">Anupam Das</h3>
+                <p class="member-role">Back-End</p>
+            </div>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Convey Your Ideas to Us</h3>
+                    <p>Contact us for questions, technical assistance, or collaboration opportunities via the contact information provided.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <span>+123-456-7890</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">✉</div>
+                            <span>hello@detectai.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📍</div>
+                            <span>123 Anywhere ST., Any City, 12345</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="contact-form" method="POST" action="{% url 'contact' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="name" class="form-input" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="message" class="form-input form-textarea" placeholder="Message" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Now</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with <span class="footer-heart">❤</span> By Anubhab.</p>
+            <p>&copy; 2024 DetectAI. All rights reserved.</p>
+        </footer>
+    </div>
+</div>
+
+<script>
+    // Contact form handling
+    document.querySelector('.contact-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
+        
+        // Simple validation
+        if (!name || !email || !message) {
+            alert('Please fill in all fields.');
+            return;
+        }
+        
+        // Show success message (you can replace this with actual form submission)
+        alert('Thank you for your message! We will get back to you soon.');
+        this.reset();
+        
+        // Here you would typically submit the form data to your Django backend
+        // fetch('/contact/', {
+        //     method: 'POST',
+        //     body: formData,
+        //     headers: {
+        //         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        //     }
+        // }).then(response => response.json())
+        //   .then(data => {
+        //       // Handle response
+        //   });
+    });
+    
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Add smooth transition effect
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 200);
+        });
+    });
+    
+    // Add loading animation on page load
+    window.addEventListener('load', function() {
+        document.body.style.opacity = '0';
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+            document.body.style.opacity = '1';
+        }, 100);
+    });
+</script>
+{% endblock %}

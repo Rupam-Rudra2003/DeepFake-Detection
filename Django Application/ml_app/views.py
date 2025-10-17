@@ -384,7 +384,7 @@ def predict_page(request):
             print(f"Exception occurred during prediction: {e}")
             return render(request, 'cuda_full.html')
 def about(request):
-    return render(request, about_template_name)
+    return render(request, 'about.html')
 
 def handler404(request,exception):
     return render(request, '404.html', status=404)

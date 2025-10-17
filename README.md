@@ -29,7 +29,7 @@ Deepfake_detection_using_deep_learning
 ### You can watch the demo
 
 <p align="center">
-  <img src="https://github.com/Rupam-Rudra2003/DeepFake-Detection/blob/main/github_assets/fakegif.gif" />
+  <img src="https://github.com/Rupam-Rudra2003/DeepFake-Detection/blob/main/github_assets/deepfake.png" />
 </p>
 
 ## 5. Our Results

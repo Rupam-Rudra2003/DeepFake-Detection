@@ -14,3 +14,4 @@ urlpatterns = [
     path('predict/', predict_page, name='predict'),
     path('cuda_full/',cuda_full,name='cuda_full'),
 ]
+
